@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sanskriti - Freelance Graphics Designer</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root{
+      --dark-bg:#121212;
+      --panel:#1f1f1f;
+      --accent:#ff0066;
+      --accent-2:#e6005a;
+      --muted:#bdbdbd;
+      --text:#f4f4f4;
+      --glass: rgba(255,255,255,0.04);
+      --max-width:1200px;
+      --radius:12px;
+      --gap:clamp(12px,2vw,28px);
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Open Sans",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      color:var(--text);
+      background:var(--dark-bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+    }
+
+    .container{
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:0 1.25rem;
+    }
+
+    header.header{
+      position:fixed;
+      inset:0 0 auto 0;
+      z-index:1000;
+      background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.12));
+      backdrop-filter: blur(6px);
+    }
+
+    .nav-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:var(--gap);
+      height:72px;
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:0 1.25rem;
+    }
+
+    .logo{
+      font-family:'Montserrat',sans-serif;
+      font-weight:700;
+      color:var(--accent);
+      font-size:1.25rem;
+      letter-spacing:0.6px;
+      text-decoration: none; /* <- remove underline */
+    }
+
+    #nav-toggle{display:none}
+
+    nav.nav{ display:flex; align-items:center; gap:1.125rem; }
+    nav.nav a{ color:var(--text); text-decoration:none; font-weight:600; font-family:'Montserrat',sans-serif; font-size:0.95rem; padding:0.45rem 0; position:relative; }
+    nav.nav a::after{ content:""; position:absolute; left:0; right:0; bottom:-8px; height:2px; width:0; background:var(--accent); transition:width .28s ease; }
+    nav.nav a:hover::after, nav.nav a.active::after{ width:100% }
+
+    .hamburger{ display:none; width:42px; height:36px; position:relative; cursor:pointer; -webkit-tap-highlight-color:transparent }
+    .hamburger span{ position:absolute; left:8px; right:8px; height:3px; background:var(--text); border-radius:6px; transition:transform .28s ease, opacity .2s ease }
+    .hamburger span:nth-child(1){ top:8px } .hamburger span:nth-child(2){ top:16px } .hamburger span:nth-child(3){ top:24px }
+
+    .mobile-panel{ display:none; position:absolute; left:0; right:0; top:72px; background:var(--dark-bg); border-top:1px solid rgba(255,255,255,0.03); padding:1rem 1.25rem }
+    .mobile-panel a{ display:block; padding:0.85rem 0; color:var(--text); font-weight:600; border-bottom:1px solid rgba(255,255,255,0.02) }
+
+    .hero-section{ height:100vh; min-height:560px; display:flex; align-items:center; justify-content:center; text-align:center; position:relative; overflow:hidden }
+    .hero-section::before{ content:""; position:absolute;inset:0; background:url('WhatsApp Image 2025-09-27 at 14.55.50.jpeg') center/cover no-repeat; filter:grayscale(.9) contrast(.9) brightness(.6); z-index:0 }
+    .hero-section::after{ content:""; position:absolute;inset:0; background: linear-gradient(180deg, rgba(10,0,10,0.25), rgba(10,0,10,0.6)); z-index:1; mix-blend-mode:multiply }
+    .hero-content{ position:relative; z-index:2; color:var(--text); padding:0 1rem; max-width:900px }
+
+    .hero-content h1{
+      font-family:'Montserrat',sans-serif;
+      font-size: clamp(2rem, 4vw, 4.5rem);
+      margin:0 0 .5rem 0;
+      line-height:1.02;
+      font-weight:700;
+      letter-spacing:-1px;
+      transition:color .25s ease, transform .3s ease;
+      display:inline-block;
+    }
+
+    /* shared animated gradient + pop (used by hero name and other headings) */
+    .name-animate, .heading-animate{
+      background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.85) 18%, var(--accent) 50%, rgba(255,255,255,0.85) 82%, #fff 100%);
+      background-size: 220% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shine 3.5s linear infinite, namePop 6s ease-in-out infinite;
+      -webkit-text-stroke: 0.3px rgba(255,255,255,0.06);
+    }
+
+    @keyframes shine{
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    @keyframes namePop{
+      0%,100% { transform: translateY(0) scale(1); filter: drop-shadow(0 6px 18px rgba(0,0,0,0.35)); }
+      50%    { transform: translateY(-6px) scale(1.02); filter: drop-shadow(0 12px 28px rgba(0,0,0,0.45)); }
+    }
+
+    .hero-content p{ margin:.5rem 0 1.75rem; color:var(--muted); font-size: clamp(1.05rem, 1.6vw, 1.6rem); font-weight:600 }
+    .btn-hire-me{ display:inline-block; background:linear-gradient(90deg,var(--accent), var(--accent-2)); color:var(--text); padding:.85rem 1.6rem; border-radius:8px; font-weight:700; text-transform:uppercase; letter-spacing:1px; box-shadow: 0 8px 24px rgba(255,0,102,0.12); transition:transform .18s ease, box-shadow .18s ease; text-decoration: none; /* <- remove underline */ }
+    .btn-hire-me:hover{ transform:translateY(-4px) }
+
+    .vertical-portfolio{ position:absolute; right:20px; top:50%; transform:translateY(-50%); font-family:'Montserrat',sans-serif; font-weight:800; font-size:clamp(2.2rem,5vw,4rem); color:var(--accent); letter-spacing:6px; writing-mode:vertical-rl; text-orientation:upright; opacity:0.9; animation: floatUpDown 4s ease-in-out infinite; z-index:2; pointer-events:none; user-select:none }
+    @keyframes floatUpDown{ 0%,100%{transform:translateY(-50%) translateY(-8px)} 50%{transform:translateY(-50%) translateY(8px)} }
+
+    section{ padding: clamp(2rem,4vw,6rem) 0 }
+    .about-section{ background: linear-gradient(180deg, transparent, rgba(0,0,0,0.02)) }
+    .about-container{ display:flex; gap:2.5rem; align-items:flex-start; flex-wrap:wrap; max-width:var(--max-width); margin:0 auto; padding:0 1.25rem }
+    .about-image-card{ background:var(--darker-gray); padding:1.25rem; border-radius:10px; flex:1 1 320px; max-width:420px; position:relative; box-shadow: 0 14px 40px rgba(0,0,0,0.4) }
+    .about-image-card img{ width:100%; height:auto; border-radius:8px; display:block; border:3px solid var(--accent) }
+    .experience-badge{ position:absolute; left:50%; transform:translateX(-50%); bottom:-28px; background:var(--accent); color:var(--dark-bg); padding:.6rem .9rem; border-radius:10px; font-weight:700; box-shadow:0 6px 18px rgba(0,0,0,0.35); text-align:center }
+    .about-text{ flex:2 1 480px; min-width:260px }
+    .about-text h2{ font-size:clamp(1.4rem,2.2vw,2.5rem); margin-bottom:1rem; color:var(--text) }
+    .about-text p{ color:var(--muted); font-size:1rem; margin-bottom:.9rem }
+
+    .placeholder-section{ border-top:1px solid rgba(255,255,255,0.03); padding-top:3.25rem }
+    .placeholder-section h2{ color:var(--accent); font-size:clamp(1.4rem,2.2vw,2.8rem); margin-bottom:1rem }
+    .projects-container{ display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap; margin-top:1.5rem }
+
+    .project-card{ background:var(--panel); padding:1.25rem; border-radius:10px; width:320px; box-shadow: 0 10px 30px rgba(0,0,0,0.45); transition:transform .2s ease, box-shadow .2s ease }
+    .project-card:hover{ transform:translateY(-8px); box-shadow:0 18px 48px rgba(0,0,0,0.55) }
+
+    /* project button styles + active states */
+    .project-btn{
+      display:inline-block;
+      padding:.6rem 1rem;
+      border-radius:8px;
+      background:transparent;
+      border:1px solid var(--muted);
+      color:var(--text);
+      font-weight:700;
+      text-decoration:none;
+      transition:all .18s ease, box-shadow .18s ease, transform .12s ease;
+    }
+    /* hover/focus: filled accent + lift */
+    .project-btn:hover,
+    .project-btn:focus{
+      background:linear-gradient(90deg,var(--accent), var(--accent-2));
+      color:#fff;
+      border-color:transparent;
+      transform:translateY(-4px);
+      box-shadow:0 12px 30px rgba(255,0,102,0.12);
+    }
+    /* pressed state */
+    .project-btn:active,
+    .project-btn.active{
+      transform:translateY(-1px);
+      box-shadow:0 6px 18px rgba(0,0,0,0.45);
+      background:linear-gradient(90deg,var(--accent), var(--accent-2));
+      color:#fff;
+    }
+    /* visible focus for keyboard users */
+    .project-btn:focus-visible{
+      outline:3px solid rgba(255,0,102,0.12);
+      outline-offset:4px;
+    }
+
+    /* Blog grid for posts */
+    .blog-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; margin-top:1rem }
+    .blog-card{ background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); padding:1rem; border-radius:10px; box-shadow:0 8px 28px rgba(0,0,0,0.45); position:relative; overflow:visible; transition: transform .22s cubic-bezier(.2,.9,.2,1), box-shadow .22s ease, filter .22s ease }
+    .blog-card:hover{ transform: translateY(-10px) scale(1.01); box-shadow: 0 28px 60px rgba(0,0,0,0.6); filter:brightness(1.02) }
+    .blog-card h4{ margin:0 0 .5rem; color:var(--text); font-size:1.05rem } .blog-card p{ margin:0; color:var(--muted); font-size:.95rem }
+    .blog-actions{ margin-top:.75rem; display:flex; gap:.5rem; flex-wrap:wrap }
+
+    .blog-actions a, .blog-actions button, .blog-actions label{ text-decoration:none; padding:.4rem .6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.06); font-weight:700; font-size:.85rem; background:transparent; color:var(--text); cursor:pointer }
+
+    /* Share dropdown (checkbox hack) */
+    .share-wrapper{ position:relative; display:inline-block }
+    .share-toggle{ display:none }
+    .share-btn{ display:inline-block; padding:.4rem .6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:var(--text); font-weight:700; cursor:pointer }
+
+    /* dropdown appears below button; constrained height so it won't overflow */
+    .share-dropdown{ position:absolute; top:calc(100% + 8px); right:0; background:var(--panel); border:1px solid rgba(255,255,255,0.04); padding:.6rem; border-radius:10px; min-width:220px; display:grid; gap:.45rem; box-shadow:0 18px 46px rgba(0,0,0,0.6); opacity:0; pointer-events:none; transform:translateY(6px) scale(.99); transition:opacity .18s ease, transform .18s ease; z-index:9999; max-height:55vh; overflow:auto }
+    /* when opened, pin the dropdown to the viewport so it won't be covered by other content */
+    .share-toggle:checked + .share-btn + .share-dropdown{
+      opacity:1;
+      pointer-events:auto;
+      /* switch to fixed positioning so the dropdown floats above page content */
+      position:fixed;
+      right:20px;
+      top:50%;
+      transform:translateY(-50%) scale(1);
+      z-index:99999; /* ensure it's on top */
+      max-height:70vh;
+    }
+
+    .share-dropdown a, .share-dropdown .copy-field{ display:flex; align-items:center; gap:.6rem; background:transparent; border:1px solid rgba(255,255,255,0.03); padding:.55rem .6rem; border-radius:8px; justify-content:flex-start; font-weight:600; color:var(--text) }
+    .share-dropdown a:hover, .share-dropdown .copy-field:hover{ background:rgba(255,255,255,0.02) }
+
+    .copy-field{ flex-direction:column; align-items:stretch; gap:.25rem }
+    .copy-field input{ background:transparent; border:1px dashed rgba(255,255,255,0.04); color:var(--muted); font-size:.9rem; outline:none; width:100%; padding:.45rem .5rem; border-radius:6px }
+    .share-hint{ font-size:.78rem; color:var(--muted); text-align:right }
+
+    /* Social icons style + active states */
+    .social-links{ display:flex; gap:1.25rem; justify-content:center; margin-top:1.25rem; flex-wrap:wrap }
+    .social-icon{
+      padding:.6rem 1rem;
+      border-radius:8px;
+      border:1px solid var(--muted);
+      color:var(--text);
+      text-decoration:none;
+      font-weight:700;
+      transition:all .18s ease, transform .12s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+    }
+    .social-icon:hover,
+    .social-icon:focus{
+      background:linear-gradient(90deg,var(--accent), var(--accent-2));
+      color:#fff;
+      transform:translateY(-4px);
+      border-color:transparent;
+      box-shadow:0 12px 30px rgba(255,0,102,0.12);
+    }
+    .social-icon:active,
+    .social-icon.active{
+      transform:translateY(-1px);
+      box-shadow:0 6px 18px rgba(0,0,0,0.45);
+      background:linear-gradient(90deg,var(--accent), var(--accent-2));
+      color:#fff;
+    }
+    .social-icon:focus-visible{ outline:3px solid rgba(255,0,102,0.12); outline-offset:4px; }
+
+    /* Apply heading animation to specific heading elements when class is used */
+    /* helper sizes for other headings so the effect looks balanced */
+    .heading-animate.h2 {
+      font-size: clamp(1.4rem,2.2vw,2.5rem);
+      font-weight:700;
+      letter-spacing:0;
+    }
+    .heading-animate.h3 {
+      font-size: clamp(1.05rem,1.8vw,1.3rem);
+      font-weight:700;
+    }
+    .heading-animate.h4 {
+      font-size:1.05rem;
+      font-weight:700;
+    }
+
+    /* responsive adjustments */
+    @media (max-width: 1024px){ .share-dropdown{ min-width:200px } }
+    @media (max-width: 768px){
+      .nav-row{ height:64px } .nav{ display:none } .hamburger{ display:block }
+      #nav-toggle:checked + label .hamburger span:nth-child(1){ transform: translateY(8px) rotate(45deg) }
+      #nav-toggle:checked + label .hamburger span:nth-child(2){ opacity:0 }
+      #nav-toggle:checked + label .hamburger span:nth-child(3){ transform: translateY(-8px) rotate(-45deg) }
+      #nav-toggle:checked ~ .mobile-panel{ display:block }
+      .mobile-panel a{ color:var(--text) }
+      .hero-section{ min-height:460px; padding:0 1rem } .hero-content p{ font-size:1rem }
+      .about-image-card{ max-width:100% } .project-card{ width:100%; max-width:520px } .projects-container{ gap:1rem; padding:0 1rem; justify-content:center }
+      /* mobile: dropdown becomes stacked full-width below the button */
+      .share-dropdown{ position:static; transform:none; opacity:1; pointer-events:auto; box-shadow:none; background:transparent; border:none; padding:0; margin-top:.5rem }
+      .share-dropdown a, .share-dropdown .copy-field{ border:1px solid rgba(255,255,255,0.04); margin-bottom:.5rem }
+      .share-wrapper{ display:block }
+
+      /* ensure fixed positioning doesn't apply on small screens */
+      .share-toggle:checked + .share-btn + .share-dropdown {
+        position: static;
+        right: auto;
+        top: auto;
+        transform: none;
+        z-index: 9999;
+        max-height:55vh;
+      }
+    }
+    @media (max-width:420px){ .nav-row{ padding:0 .75rem } .hero-content h1{ font-size:clamp(1.6rem,7vw,2.4rem) } .btn-hire-me{ padding:.6rem 1rem; font-size:.9rem } .about-section{ padding:2.5rem 0 } .placeholder-section{ padding:2rem 0 } }
+
+    /* -- Accessibility: respect user preference for reduced motion -- */
+    @media (prefers-reduced-motion: reduce) {
+      /* Turn off decorative animations for users who prefer reduced motion */
+      .name-animate, .heading-animate,
+      .hero-section, .vertical-portfolio,
+      .project-card, .blog-card, .share-dropdown,
+      .project-btn, .social-icon {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      /* Keep simple focus outlines so keyboard users still get visual feedback */
+      :focus { outline: 3px solid rgba(255,0,102,0.12); outline-offset:4px; }
+
+      /* Reduce motion for keyframes that might still apply elsewhere */
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+
+    .fade-in-up{ animation: fadeInUp .9s ease both .25s } .slide-in-left{ animation: slideInLeft .9s ease both .2s } .slide-in-right{ animation: slideInRight .9s ease both .35s }
+    @keyframes fadeInUp{ from{opacity:0; transform: translateY(28px)} to{opacity:1; transform:none} } @keyframes slideInLeft{ from{opacity:0; transform: translateX(-28px)} to{opacity:1; transform:none} } @keyframes slideInRight{ from{opacity:0; transform: translateX(28px)} to{opacity:1; transform:none} }
+    .forte-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 1.5rem;
+      justify-items: center;
+      align-items: center;
+      margin-top: 1.5rem;
+    }
+
+    .skill-card {
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      background: var(--glass);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease, box-shadow 0.4s ease;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .skill-card:hover {
+      transform: scale(1.15);
+      box-shadow: 0 16px 40px rgba(255,0,102,0.3);
+    }
+
+    .skill-card img {
+      width: 50%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @media(max-width:480px){
+      .skill-card { width: 64px; height: 64px; }
+    }
+    
+/* Responsive adjustment for vertical portfolio text */
+@media (max-width: 768px) {
+  .vertical-portfolio {
+    right: 10px;           /* bring it closer to edge */
+    font-size: clamp(1.6rem, 5vw, 2.8rem);
+    letter-spacing: 4px;
+  }
+}
+
+/* Previously the vertical-portfolio was hidden on very small screens.
+   Changed so the vertical-portfolio remains visible on phones but scales
+   down and keeps good spacing (so it does not overlap header).
+*/
+@media (max-width: 480px) {
+  .vertical-portfolio {
+    right: 8px;
+    top: 48%;
+    font-size: clamp(1.1rem, 6vw, 1.8rem);
+    letter-spacing: 3px;
+    opacity: 0.95;
+    z-index: 6;               /* ensure it's above hero visuals but below header */
+    pointer-events: none;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+  }
+
+  /* Ensure mobile-panel sits above the vertical portfolio when opened */
+  #nav-toggle:checked ~ .mobile-panel {
+    z-index: 1001;
+  }
+}
+
+/* Education section styling */
+.education-section {
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,0.02));
+}
+.education-container {
+  display: flex;
+  flex-direction: column;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  gap: 1.5rem;
+}
+.education-container h2 {
+  font-size: clamp(1.4rem, 2.2vw, 2.5rem);
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.education-container p {
+  color: var(--muted);
+  font-size: 2rem;
+  line-height:2.5;
+  margin-bottom: 0.9rem;
+}
+.about-text h2.heading-animate,
+.education-container h2 {
+  color: var(--accent);
+}
+.fun-text {
+  text-align: center;          /* center align */
+  color: #ff0066;              /* your accent color */
+  font-family: 'Montserrat', sans-serif; /* funky font */
+  font-weight: 800;            /* bold & striking */
+  font-size: clamp(1.5rem, 4vw, 2.5rem); /* responsive size */
+  letter-spacing: 2px;         /* space between letters */
+  background: linear-gradient(90deg, #ff0066, #ff66aa, #ff0066);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: funkyGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes funkyGlow {
+  0% { text-shadow: 0 0 4px #ff0066, 0 0 8px #ff66aa, 0 0 12px #ff0066; }
+  50% { text-shadow: 0 0 8px #ff0066, 0 0 16px #ff66aa, 0 0 24px #ff0066; }
+  100% { text-shadow: 0 0 4px #ff0066, 0 0 8px #ff66aa, 0 0 12px #ff0066; }
+}
+footer.footer .container {
+  text-align: center;
+}
+
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="nav-row">
+      <a class="logo" href="#"></a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a class="active" href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#education">Education</a>
+        <a href="#forte">Skills</a>
+        <a href="#portfolio">Projects</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <input id="nav-toggle" type="checkbox" aria-hidden="true" />
+      <label for="nav-toggle" class="hamburger" aria-hidden="true"><span></span><span></span><span></span></label>
+    </div>
+
+    <div class="mobile-panel container" aria-hidden="true">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#forte">Skills</a>
+      <a href="#education">Education</a>
+      <a href="#portfolio">Projects</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="hero-section">
+      <div class="hero-content fade-in-up container">
+        <h1 class="name-animate">Hi, I'm Sanskriti Suhani!</h1>
+        <p>Full Stack Developer • Graphics Designer • Photographer</p>
+        <a class="btn-hire-me" href="#contact">Let's Collaborate!</a>
+      </div>
+      <div class="vertical-portfolio" aria-hidden="true">PORTFOLIO</div>
+    </section>
+
+    <section id="about" class="about-section">
+      <div class="about-container">
+        <div class="about-image-card slide-in-left">
+          <img src="WhatsApp Image 2025-09-27 at 14.34.14.jpeg" alt="Sanskriti Suhani Professional Portrait">
+          <div class="experience-badge"><span></span><small>Fresher!</small></div>
+        </div>
+        <div class="about-text slide-in-right">
+          <h2 class="heading-animate h2">Introduction About Me</h2>
+          <p>Hello! I am 1st year student in Scaler School Of Technology and pursuing a degree from Birla Institute of Technology and Science (BITS). I'm a versatile professional blending the worlds of <strong>Web Development</strong> and <strong>Graphics Design</strong>. I specialize in creating stunning, user-friendly digital experiences that are not only aesthetically pleasing but also technically robust.</p>
+          <p>My work philosophy is centered on clean code and pixel-perfect design.I am very passionate about contributing to meaningful projects and adding value to whereever I go. Let's build something exceptional together!</p>
+        </div>
+        <section id="education" class="about-section">
+   <div class="about-container">
+    <div class="about-image-card slide-in-left">
+  <img src="eduimg1.jpeg" alt="Education Image" style="width:80%; margin-bottom:1rem;">
+  <img src="eduimg2.jpeg" alt="Education Image" style="width:80%;">
+    </div>
+
+    <div class="about-text slide-in-right">
+      <h2 class="heading-animate h2">Education</h2>
+      <p>I am currently pursuing advanced courses in Computer Science at <b>Scaler School of Technology,Bangalore</b> building a strong foundation in modern software engineering and problem-solving. <br><br>
+        Alongside, I am pursuing a Bachelor of Science in Computer Science from <b>Birla Institute of Technology and Science (BITS), Pilani</b>, one of India’s most reputed institutions.That has helped me build a strong technical foundation and an analytical mindset.
+<br><br>
+         My academic journey began at <strong>Kairali School, Ranchi</strong>, where I secured 98.4% in Class 10 and 95.2% in Class 12, earning the distinction of being the school topper in both. Throughout school, I consistently excelled in academics, winning multiple Science Olympiads which strengthened my curiosity and love for problem-solving. Beyond academics, serving in various leadership roles, including House Captain and Class Representative , leading teams and managing events that nurtured my leadership, teamwork, and communication skills.
+         I also volunteered in numerous school events, developing a sense of responsibility, discipline, and adaptability. These formative years shaped me into a resilient and self-driven individual, instilling values that continue to guide my approach to both technology and life. They remain the foundation of my determination to keep learning, building, and creating meaningful impact.</p>
+    </div>
+  </div>
+</section>
+      </div>
+    </section>
+    <section id="forte" class="placeholder-section">
+      <div class="container">
+        <h2 class="heading-animate h2">My Forte</h2>
+        <p>Areas where I excel — from design to coding.</p>
+        <p>My expertise includes programming languages like C, C++, Java, JavaScript, HTML, and Python, which enable me to build efficient and scalable solutions across different platforms. I also enjoy crafting intuitive and visually appealing interfaces using tools like Figma, bridging the gap between functionality and design. This blend of technical proficiency and creative problem-solving allows me to bring ideas to life , from concept to complete, polished digital experiences. I am very passionate about contributing to meaningful projects. I am eager to learn to function at a professional level.</p>
+        <div class="forte-grid">
+          <div class="skill-card"><img src="logo1.jpeg" alt="Skill 1"></div>
+          <div class="skill-card"><img src="logo2.jpeg" alt="Skill 2"></div>
+          <div class="skill-card"><img src="logo3.jpeg" alt="Skill 3"></div>
+          <div class="skill-card"><img src="logo4.jpeg" alt="Skill 4"></div>
+          <div class="skill-card"><img src="logo5.jpeg" alt="Skill 5"></div>
+          <div class="skill-card"><img src="logo6.jpeg" alt="Skill 6"></div>
+          <div class="skill-card"><img src="logo7.jpeg" alt="Skill 7"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="portfolio" class="placeholder-section">
+      <div class="container">
+        <h2 class="heading-animate h2">My Projects 2025</h2>
+        <p>Featured works — click to open each project.</p>
+        <div class="projects-container">
+          <div class="project-card">
+            <h3 class="heading-animate h3">Gallery Grid</h3>
+            <p>A modern, responsive photo gallery layout showcasing creativity and clean design.</p>
+            <a class="project-btn" href="https://suhanisanskriti28-oss.github.io/CSS_Grid_Gallery/" target="_blank" rel="noreferrer">View Project</a>
+          </div>
+
+          <div class="project-card">
+            <h3 class="heading-animate h3">Profile Card</h3>
+            <p>A stylish and minimal profile card project built with HTML & CSS — perfect for portfolios.</p>
+            <a class="project-btn" href="https://suhanisanskriti28-oss.github.io/ProfileCard/" target="_blank" rel="noreferrer">View Project</a>
+          </div>
+
+          <div class="project-card">
+            <h3 class="heading-animate h3">Ferris Wheel</h3>
+            <p>A minimal Ferris wheel project built with HTML & CSS .</p>
+            <a class="project-btn" href="https://suhanisanskriti28-oss.github.io/Ferris_wheel_project/" target="_blank" rel="noreferrer">View Project</a>
+          </div>
+
+          <div class="project-card">
+            <h3 class="heading-animate h3">My Photography</h3>
+            <p>A stylish and minimal gallery grid project built with HTML & CSS — presenting my own captured photographs as a photographer.</p>
+            <a class="project-btn" href="https://suhanisanskriti28-oss.github.io/My_Photo_Booth/">View Project</a>
+          </div>
+
+          <div class="project-card">
+            <h3 class="heading-animate h3">Orbit Rotation</h3>
+            <p>A basic project built with HTML & CSS positioning and keyframes.</p>
+            <a class="project-btn" href="https://suhanisanskriti28-oss.github.io/Orbit_rotatory/">View Project</a>
+          </div>
+
+          <div class="project-card">
+            <h3 class="heading-animate h3">Package Tracker</h3>
+            <p>A stylish and minimal project built with HTML, CSS and Javascript to help find your package.</p>
+            <a class="project-btn" href="https://suhanisanskriti28-oss.github.io/Package_tracker_website/">View Project</a>
+          </div>
+          <div class="project-card">
+            <h3 class="heading-animate h3">Weekend Plans List</h3>
+            <p>A beginner level project built with HTML lists & basic CSS margin and color properties.</p>
+            <a class="project-btn" href="https://suhanisanskriti28-oss.github.io/plans_weekend_list/">View Project</a>
+          </div>
+          <div class="project-card">
+            <h3 class="heading-animate h3">Movie Collection Table</h3>
+            <p>A beginner level project built with HTML table.</p>
+            <a class="project-btn" href="https://suhanisanskriti28-oss.github.io/movie_collection_table/">View Project</a>
+          </div>
+          <div class="project-card">
+            <h3 class="heading-animate h3">Recipe Page</h3>
+            <p>A beginner level project built with HTML lists and basic properties of align and font-size.</p>
+            <a class="project-btn" href="https://suhanisanskriti28-oss.github.io/recipe_page_lists/">View Project</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="blog" class="placeholder-section">
+      <div class="container">
+        <h2 class="heading-animate h2">My Blog</h2>
+        <p>Latest blogs and my written pieces.</p>
+
+        <div class="blog-grid" aria-live="polite">
+
+          <!-- Post 1 -->
+          <article class="blog-card">
+            <h4 class="heading-animate h4">How to make most out of a research paper</h4>
+            <p>Quick tips on reading, summarizing, and turning research into projects. Published Oct 4, 2025.</p>
+            <div class="blog-actions">
+              <a href="https://suhanisanskriti28-qmhgn.wordpress.com/2025/10/04/how-to-make-most-out-of-a-reasearch-paper/" target="_blank" rel="noreferrer">Read</a>
+
+              <!-- share (checkbox hack) for post 1 -->
+              <div class="share-wrapper">
+                <input class="share-toggle" id="share-1" type="checkbox" aria-hidden="true" />
+                <label class="share-btn" for="share-1">Share</label>
+
+                <div class="share-dropdown" role="menu" aria-hidden="true">
+                  <a href="https://api.whatsapp.com/send?text=Check%20this%20out%3A%20https%3A%2F%2Fsuhanisanskriti28-qmhgn.wordpress.com%2F2025%2F10%2F04%2Fhow-to-make-most-out-of-a-reasearch-paper%2F" target="_blank" rel="noreferrer noopener">WhatsApp</a>
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fsuhanisanskriti28-qmhgn.wordpress.com%2F2025%2F10%2F04%2Fhow-to-make-most-out-of-a-reasearch-paper%2F" target="_blank" rel="noreferrer noopener">Facebook</a>
+                  <a href="https://twitter.com/intent/tweet?text=Check%20this%20out%3A&url=https%3A%2F%2Fsuhanisanskriti28-qmhgn.wordpress.com%2F2025%2F10%2F04%2Fhow-to-make-most-out-of-a-reasearch-paper%2F" target="_blank" rel="noreferrer noopener">Twitter</a>
+                  <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsuhanisanskriti28-qmhgn.wordpress.com%2F2025%2F10%2F04%2Fhow-to-make-most-out-of-a-reasearch-paper%2F" target="_blank" rel="noreferrer noopener">LinkedIn</a>
+                  <a href="https://github.com/" target="_blank" rel="noreferrer noopener">GitHub (open to paste)</a>
+                  <a href="https://www.instagram.com/" target="_blank" rel="noreferrer noopener">Instagram (open to paste)</a>
+
+                  <div class="copy-field" aria-hidden="false">
+                    <label class="copy-label" for="copy-url-1" style="font-weight:700; font-size:.85rem;">Copy link</label>
+                    <input id="copy-url-1" type="text" readonly value="https://suhanisanskriti28-qmhgn.wordpress.com/2025/10/04/how-to-make-most-out-of-a-reasearch-paper/">
+                    <div class="share-hint">Select & copy manually</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Post 2 (Hindi poem) -->
+          <article class="blog-card">
+            <h4 class="heading-animate h4">कौन है वो?</h4>
+            <p>A poem in Hindi that I wrote for my father on his birthday. Published Oct 5, 2025.</p>
+            <div class="blog-actions">
+              <a href="https://suhanisanskriti28-qmhgn.wordpress.com/2025/10/05/%e0%a4%95%e0%a5%8c%e0%a4%a8-%e0%a4%b9%e0%a5%88-%e0%a4%b5%e0%a5%8b/" target="_blank" rel="noreferrer">Read</a>
+
+              <!-- share (checkbox hack) for post 2 -->
+              <div class="share-wrapper">
+                <input class="share-toggle" id="share-2" type="checkbox" aria-hidden="true" />
+                <label class="share-btn" for="share-2">Share</label>
+
+                <div class="share-dropdown" role="menu" aria-hidden="true">
+                  <a href="https://api.whatsapp.com/send?text=कृपया%20देखें%3A%20https%3A%2F%2Fsuhanisanskriti28-qmhgn.wordpress.com%2F2025%2F10%2F05%2F%25e0%25a4%2595%25e0%25a5%258c%25e0%25a4%25a8-%25e0%25a4%25b9%25e0%25a5%2588-%25e0%25a4%25b5%25e0%25a5%258b%2F" target="_blank" rel="noreferrer noopener">WhatsApp</a>
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fsuhanisanskriti28-qmhgn.wordpress.com%2F2025%2F10%2F05%2F%25e0%25a4%2595%25e0%25a5%258c%25e0%25a4%25a8-%25e0%25a4%25b9%25e0%25a5%2588-%25e0%25a4%25b5%25e0%25a5%258b%2F" target="_blank" rel="noreferrer noopener">Facebook</a>
+                  <a href="https://twitter.com/intent/tweet?text=%E0%A4%95%E0%A5%83%E0%A4%A8%E0%A5%8D%20%E0%A4%B9%E0%A5%88%20%E0%A4%B5%E0%A5%8B%20-%20Please%20check&url=https%3A%2F%2Fsuhanisanskriti28-qmhgn.wordpress.com%2F2025%2F10%2F05%2F%25e0%25a4%2595%25e0%25a5%258c%25e0%25a4%25a8-%25e0%25a4%25b9%25e0%25a5%2588-%25e0%25a4%25b5%25e0%25a5%258b%2F" target="_blank" rel="noreferrer noopener">Twitter</a>
+                  <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsuhanisanskriti28-qmhgn.wordpress.com%2F2025%2F10%2F05%2F%25e0%25a4%2595%25e0%25a5%258c%25e0%25a4%25a8-%25e0%25a4%25b9%25e0%25a5%2588-%25e0%25a4%25b5%25e0%25a5%258b%2F" target="_blank" rel="noreferrer noopener">LinkedIn</a>
+                  <a href="https://github.com/" target="_blank" rel="noreferrer noopener">GitHub (open to paste)</a>
+                  <a href="https://www.instagram.com/" target="_blank" rel="noreferrer noopener">Instagram (open to paste)</a>
+
+                  <div class="copy-field" aria-hidden="false">
+                    <label class="copy-label" for="copy-url-2" style="font-weight:700; font-size:.85rem;">Copy link</label>
+                    <input id="copy-url-2" type="text" readonly value="https://suhanisanskriti28-qmhgn.wordpress.com/2025/10/05/%e0%a4%95%e0%a5%8c%e0%a4%a8-%e0%a4%b9%e0%a5%88-%e0%a4%b5%e0%a5%8b/">
+                    <div class="share-hint">Select & copy manually</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="placeholder-section contact-section">
+      <div class="container">
+        <h2 class="heading-animate h2">Contact Me!</h2>
+        <p>Reach out for collaborations!</p>
+
+        <div class="social-links">
+          <a class="social-icon" href="https://www.instagram.com/euphoric.snaps?igsh=MTBxbmlwY2h0NjR5eA==" target="_blank" rel="noreferrer">Instagram</a>
+          <a class="social-icon" href="https://github.com/suhanisanskriti28-oss" target="_blank" rel="noreferrer">GitHub</a>
+          <a class="social-icon" href="https://www.linkedin.com/in/sanskriti-suhani-657663278/" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a class="social-icon" href="https://codeforces.com/profile/SansKritiCal" target="_blank" rel="noreferrer">Codeforces</a>
+        </div>
+        <br>
+        <p class="fun-text">The Best Is Yet To Come!</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">&copy; 2025 Sanskriti Suhani. All rights reserved.</div>
+  </footer>
+</body>
+</html>
